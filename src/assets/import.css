@@ -1,0 +1,68 @@
+@import url('./bootstrap.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600&display=swap');
+
+body {
+  background-color: #0a2d4d;
+  font-family: 'Lexend', sans-serif;
+}
+
+.transparent { 
+  background: #00000000;
+}
+
+.heading1 {
+  font-size: 2.25rem;
+  letter-spacing: -.045rem;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+.heading3 {
+  font-size: 1rem;
+    letter-spacing: -.01rem;
+    line-height: 1.5;
+}
+
+.badge-warning {
+  margin: 10px;
+  padding: 8px 20px 8px 20px;
+  border-radius: 10px;
+  background-color: rgb(255, 189, 66);
+}
+
+.badge-success {
+  margin: 10px;
+  padding: 8px 20px 8px 20px;
+  border-radius: 10px;
+  background-color: rgb(8, 129, 75);
+}
+
+.light1 {
+  color: #fff;
+}
+
+.light2 {
+  color: #eee;
+}
+
+.card-display-overlay {
+  background-color: #fff;
+  border-radius: 6px;
+  color: #333;
+  font-family: Courier Prime Bits,monospace;
+  font-size: 1.625rem;
+  letter-spacing: .156rem;
+  line-height: 1.2;
+  text-align: center;
+  -webkit-user-select: text;
+  user-select: text;
+  width: 100%;
+  word-break: break-all;
+}
+
+.function-container {
+  background-color: #0a253c;
+  border: 2px solid #082035;
+  border-radius: 6px;
+  color: #fff;
+}
