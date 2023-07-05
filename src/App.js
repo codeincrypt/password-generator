@@ -9,56 +9,120 @@ import "./assets/import.css";
 function App() {
   const [password, setPassword] = useState();
   const [length, setLength] = useState(20);
-
-  const [min, setMin] = useState(1);
-  const [max, setMax] = useState(100);
+  const [isCheckedSymbol, setIsCheckedSymbol] = useState(false);
+  const [isCheckedNumeric, setIsCheckedNumeric] = useState(false);
 
   const [copied, setCopied] = useState(false);
 
-  const passwordtype = {
-    numeric: "0123456789",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-    symbols: `"!@#$%^&*()_-,.><?/'+'=[]{}|"`
-    // alphanumeric:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-  };
-
-  const [type, setType] = useState(passwordtype.alphabet);
+  const NUMERIC = "0123456789";
+  const ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const SYMBOLS = `"!@#$%^&*()_-,.><?/'+'=[]{}|"`;
   const [typeName, setTypeName] = useState("alphabet");
 
   function generateString(length, type) {
+    console.log('length', length, type)
     setCopied(false);
     let result = "";
     const charactersLength = type.length;
-    for (let i = 0; i < length; i++) { result += type.charAt(Math.floor(Math.random() * charactersLength)) }
+    for (let i = 0; i < length; i++) {
+      result += type.charAt(Math.floor(Math.random() * charactersLength));
+    }
     return result;
   }
 
   const generatePassword = () => {
-    let result = generateString(length, type);
+    let types
+    if(typeName === "numeric"){
+      types = NUMERIC
+    } else {
+      if(isCheckedNumeric && isCheckedSymbol){
+        types = ALPHABET+NUMERIC+SYMBOLS
+      } else if(isCheckedNumeric){
+        types = ALPHABET+NUMERIC
+      } else if(isCheckedSymbol) {
+        types = ALPHABET+SYMBOLS
+      } else {
+        types = ALPHABET
+      }
+    }
+    let result = generateString(length, types);
     setPassword(result);
   };
 
   const changeType = (value) => {
-    setType(passwordtype[value]);
-    setTypeName(value)
+    setTypeName(value);
 
-    let length2
-    if(value === "numeric"){
-      length2 = 6
+    let length2;
+    let types;
+    if (value === "numeric") {
+      length2 = 6;
+      types = NUMERIC;
+      
     } else {
-      length2 = 20
+      length2 = 20;
+      types = ALPHABET;
+      setIsCheckedSymbol(false)
+      setIsCheckedNumeric(false)
     }
     setLength(length2);
-    let result = generateString(length2, passwordtype[value]);
+    let result = generateString(length2, types);
     setPassword(result);
   };
 
+  const addSymbol = (e) => {
+    let value = e.target.checked
+    setIsCheckedSymbol(value)
+    let types
+    if (value === true) {
+      types = ALPHABET + SYMBOLS
+    } else {
+      types = ALPHABET
+    }
+    if(isCheckedNumeric){
+      types = types + NUMERIC
+    }
+    let result = generateString(length, types);
+    setPassword(result);
+  };
+
+  const addNumeric = (e) => {
+    let value = e.target.checked
+    setIsCheckedNumeric(value)
+    let types
+    if (value === true) {
+      types = ALPHABET + NUMERIC
+    } else {
+      types = ALPHABET
+    }
+    if(isCheckedSymbol){
+      types = types + SYMBOLS
+    }
+    let result = generateString(length, types);
+    setPassword(result);
+  };
+
+  const changeLength = (e) => {
+    setLength(e)
+    let types
+    if(typeName === "numeric"){
+      types = NUMERIC
+    } else {
+      if(isCheckedNumeric && isCheckedSymbol){
+        types = ALPHABET+NUMERIC+SYMBOLS
+      } else if(isCheckedNumeric){
+        types = ALPHABET+NUMERIC
+      } else if(isCheckedSymbol) {
+        types = ALPHABET+SYMBOLS
+      } else {
+        types = ALPHABET
+      }
+    }
+    let result = generateString(e, types);
+    setPassword(result);
+  }
+
   const copyToClipboard = () => {
     setCopied(true);
-    // setTimeout(function() {
-    //   $('#copied_tip').remove();
-    // }, 800);
-    // $(target).append("<div class='tip' id='copied_tip'>Copied!</div>");
     var input = document.createElement("input");
     input.setAttribute("value", password);
     document.body.appendChild(input);
@@ -169,42 +233,47 @@ function App() {
               <span className="badge-warning">Password not copied</span>
             )}
           </div>
-          <div className="function-container p-4 row">
-            {typeName === 'numeric' ? (
-            <Form.Group className="col-4 text-right">
-              <RangeSlider
-                value={length}
-                onChange={(e) => setLength(e.target.value)}
-                min={1}
-                max={50}
-              />
-            </Form.Group>
-            ) : (
-            <Form.Group className="col-4 text-right">
-              <RangeSlider
-                value={length}
-                onChange={(e) => setLength(e.target.value)}
-                min={1}
-                max={100}
-              />
-            </Form.Group>
-            )}
-            <Form.Group className="col-3 text-right">
-              <Form.Check
-                name="Numbers"
-                label="Numbers"
-                // onChange={handleChange}
-                id="validationFormik16"
-              />
-            </Form.Group>
-            <Form.Group className="col-3">
-              <Form.Check
-                name="Symbols"
-                label="Symbols"
-                // onChange={handleChange}
-                id="validationFormik106"
-              />
-            </Form.Group>
+          <div className="function-container p-4">
+            <div className="row justify-content-center">
+              {typeName === "numeric" ? (
+                <Form.Group className="col-4 text-right">
+                  <RangeSlider
+                    value={length}
+                    onChange={(e) => changeLength(e.target.value)}
+                    min={1}
+                    max={50}
+                  />
+                </Form.Group>
+              ) : (
+                <React.Fragment>
+                  <Form.Group className="col-4 text-right">
+                    <RangeSlider
+                      value={length}
+                      onChange={(e) => changeLength(e.target.value)}
+                      min={1}
+                      max={100}
+                    />
+                  </Form.Group>
+
+                  <Form.Group className="col-3 text-right">
+                    <Form.Check
+                      name="Numbers"
+                      label="Numbers"
+                      onChange={(e) => addNumeric(e)}
+                      id="validationFormik16"
+                    />
+                  </Form.Group>
+                  <Form.Group className="col-3">
+                    <Form.Check
+                      name="Symbols"
+                      label="Symbols"
+                      onChange={(e) => addSymbol(e)}
+                      id="validationFormik106"
+                    />
+                  </Form.Group>
+                </React.Fragment>
+              )}
+            </div>
           </div>
         </div>
       </div>
